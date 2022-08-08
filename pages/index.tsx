@@ -1,14 +1,14 @@
 import type { NextPage } from "next";
 import Header from "./components/header/_header";
 import Section from "./components/section/_section";
+import { data } from "./utils/data";
 
 const Home: NextPage = () => {
-  const titles: String[] = ["Bolos", "Tortas", "Salgados", "Bebidas"];
   return (
     <>
       <Header />
-      <div className="pt-[7rem] space-y-64">
-        {titles.map((e) => {
+      <div className="pt-[7rem] space-y-10">
+        {data.sections.map((e) => {
           return <Section title={e} />;
         })}
       </div>
