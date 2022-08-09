@@ -27,7 +27,9 @@ function Header(): ReactElement {
             <span className="text-pink-400">Cardápio</span>
           </h1>
         </Link>
-        <BsCart className="text-[#2C89FF] text-2xl mr-4" />
+        <Link href={"/cart"}>
+          <BsCart className="text-[#2C89FF] text-2xl mr-4 cursor-pointer" />
+        </Link>
       </div>
       <div
         className={`pt-[4rem] fixed w-screen ${
@@ -45,15 +47,21 @@ function Header(): ReactElement {
               </div>
               <div className="flex items-center space-x-3">
                 {/* <GiPieSlice className="text-[#2C89FF] text-xl" /> */}
-                <h1 className="text-[#2C89FF] text-xl cursor-pointer">Tortas</h1>
+                <h1 className="text-[#2C89FF] text-xl cursor-pointer">
+                  Tortas
+                </h1>
               </div>
               <div className="flex items-center space-x-3">
                 {/* <GiFrenchFries className="text-[#2C89FF] text-xl" /> */}
-                <h1 className="text-[#2C89FF] text-xl cursor-pointer">Salgados</h1>
+                <h1 className="text-[#2C89FF] text-xl cursor-pointer">
+                  Salgados
+                </h1>
               </div>
               <div className="flex items-center space-x-3">
                 {/* <GiWaterBottle className="text-[#2C89FF] text-xl" /> */}
-                <h1 className="text-[#2C89FF] text-xl cursor-pointer">Bebidas</h1>
+                <h1 className="text-[#2C89FF] text-xl cursor-pointer">
+                  Bebidas
+                </h1>
               </div>
             </div>
             <h1 className="text-center text-[#2C89FF]">

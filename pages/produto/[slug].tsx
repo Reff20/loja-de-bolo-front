@@ -2,9 +2,11 @@ import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useState } from "react";
 import Header from "../components/header/_header";
 import { data } from "../utils/data";
+import Router from "next/router";
 
 export default function ProductScreen(): ReactElement {
   const [isQtd, setQtd] = useState(1);
+  const [isValor, setValor] = useState<any | any>();
   const [isProduct, setProduct] = useState<any | any>();
   const router = useRouter();
   const { slug } = router.query;
@@ -12,14 +14,17 @@ export default function ProductScreen(): ReactElement {
 
   useEffect(() => {
     setProduct(product);
-  }, [product]);
+    setValor(product?.valor)
+  }, [product,isValor]);
 
   const incrementQtd = () => {
     setQtd(isQtd + 1);
+    setValor(isValor * isQtd)
   };
 
   const decrementQtd = () => {
     isQtd > 1 && setQtd(isQtd - 1);
+    setValor(isValor * isQtd)
   };
 
   const addCart = () => {
@@ -29,8 +34,12 @@ export default function ProductScreen(): ReactElement {
           id: isProduct.id,
           slug: isProduct.slug,
           qtd: isQtd,
+          nome: isProduct.nome,
+          valor: isProduct.valor,
+          image: isProduct.image,
         },
       ];
+      Router.push("/cart");
       localStorage.setItem("cart", JSON.stringify(obj));
     } else {
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -40,9 +49,12 @@ export default function ProductScreen(): ReactElement {
         id: isProduct.id,
         slug: isProduct.slug,
         qtd: isQtd,
+        nome: isProduct.nome,
+        valor: isProduct.valor * isQtd,
+        image: isProduct.image,
       });
       localStorage.setItem("cart", JSON.stringify(newCart));
-      console.log(JSON.parse(localStorage.getItem("cart") || "[]"));
+      Router.push("/cart");
     }
   };
 
@@ -72,7 +84,10 @@ export default function ProductScreen(): ReactElement {
               alt="bolo"
             />
           </div>
-          <div className="space-y-6">
+          <h1 className="text-center text-2xl font-bold text-green-600">
+            R${isValor}
+          </h1>
+          <div className="space-y-4">
             <div className="flex space-x-4 items-center justify-center">
               <div
                 className="bg-blue-200 active:bg-blue-300 rounded-full w-8 h-8 text-center"
