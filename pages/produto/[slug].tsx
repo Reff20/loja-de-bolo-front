@@ -14,17 +14,17 @@ export default function ProductScreen(): ReactElement {
 
   useEffect(() => {
     setProduct(product);
-    setValor(product?.valor)
-  }, [product,isValor]);
+    setValor(product?.valor);
+  }, [product, isValor]);
 
   const incrementQtd = () => {
     setQtd(isQtd + 1);
-    setValor(isValor * isQtd)
+    setValor(isValor * isQtd);
   };
 
   const decrementQtd = () => {
     isQtd > 1 && setQtd(isQtd - 1);
-    setValor(isValor * isQtd)
+    setValor(isValor * isQtd);
   };
 
   const addCart = () => {
@@ -44,15 +44,32 @@ export default function ProductScreen(): ReactElement {
     } else {
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
       let newCart = cart.filter((e: any) => e.slug !== isProduct.slug);
-      localStorage.clear();
-      newCart.push({
-        id: isProduct.id,
-        slug: isProduct.slug,
-        qtd: isQtd,
-        nome: isProduct.nome,
-        valor: isProduct.valor * isQtd,
-        image: isProduct.image,
-      });
+      let newItem = cart.filter((e: any) => e.slug === isProduct.slug);
+
+      if (newItem.length == 0) {
+        localStorage.clear();
+        newCart.push({
+          id: isProduct.id,
+          slug: isProduct.slug,
+          qtd: isQtd,
+          nome: isProduct.nome,
+          valor: isProduct.valor,
+          image: isProduct.image,
+        });
+      } else {
+        localStorage.clear();
+        newCart.push({
+          id: isProduct.id,
+          slug: isProduct.slug,
+          qtd: isQtd + newItem[0].qtd,
+          nome: isProduct.nome,
+          valor: isProduct.valor,
+          image: isProduct.image,
+        });
+      }
+
+      console.log(newCart);
+
       localStorage.setItem("cart", JSON.stringify(newCart));
       Router.push("/cart");
     }
@@ -85,7 +102,7 @@ export default function ProductScreen(): ReactElement {
             />
           </div>
           <h1 className="text-center text-2xl font-bold text-green-600">
-            R${isValor}
+            R${product.valor}
           </h1>
           <div className="space-y-4">
             <div className="flex space-x-4 items-center justify-center">

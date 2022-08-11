@@ -8,8 +8,8 @@ const Home: NextPage = () => {
     <>
       <Header />
       <div className="pt-[7rem] space-y-10">
-        {data.sections.map((e) => {
-          return <Section title={e} />;
+        {data.sections.map((e, key) => {
+          return <Section key={key} title={e} />;
         })}
       </div>
     </>
