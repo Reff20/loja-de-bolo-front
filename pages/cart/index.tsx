@@ -1,15 +1,20 @@
-import { NextPage } from "next";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useState } from "react";
 import Header from "../components/header/_header";
 import Item from "../components/item/_item";
 import ItemCart from "../components/item/_itemCart";
+import axios from "axios";
+import api from "../api/API";
 
 export default function Cart(): ReactElement {
   const router = useRouter();
   const [isItems, setItems] = useState<any | any>();
   const [isTotal, setTotal] = useState<Number | Number>();
   const [isOpen, setOpen] = useState<boolean | boolean>();
+  const [isFinal, setFinal] = useState<boolean | boolean>();
+  const [isOrder, setOrder] = useState<boolean | boolean>();
+  const [isName, setName] = useState<String | String>("");
+  const [isNoName, setNoName] = useState<boolean | boolean>();
 
   useEffect(() => {
     let items = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -20,6 +25,17 @@ export default function Cart(): ReactElement {
     }
     setTotal(total);
   }, []);
+
+  const sendOrder = () => {
+    let data = {
+      customer: isName,
+      items: JSON.parse(localStorage.getItem("cart") || "[]"),
+      cost: isTotal
+    }    
+    api
+      .post("/order/create", data)
+      .catch((e) => console.log(e));
+  };
 
   return (
     <>
@@ -100,7 +116,10 @@ export default function Cart(): ReactElement {
                   </div>
                   <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button
-                      onClick={() => setOpen(!isOpen)}
+                      onClick={() => {
+                        setOpen(!isOpen);
+                        setFinal(!isFinal);
+                      }}
                       type="button"
                       className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-400 text-base font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                     >
@@ -112,6 +131,145 @@ export default function Cart(): ReactElement {
                       className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                     >
                       Voltar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {isFinal && (
+          <div
+            className="relative z-10"
+            aria-labelledby="modal-title"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"></div>
+
+            <div className="fixed z-10 inset-0 overflow-y-auto">
+              <div className="flex items-center justify-center min-h-full p-4 text-center sm:p-0">
+                <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+                  <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      <div></div>
+                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3
+                          className="text-lg leading-6 font-medium text-gray-900"
+                          id="modal-title"
+                        >
+                          Pedido finalizado.
+                        </h3>
+                        <div className="mt-2 space-y-2">
+                          {isNoName && (
+                            <>
+                              <p className="text-red-500">
+                                Escreva seu nome para retirada
+                              </p>
+                              <input
+                                type="text"
+                                className="border-2 rounded-md border-red-500"
+                                onChange={(e) => setName(e.target.value)}
+                              />
+                            </>
+                          )}
+                          {!isNoName && (
+                            <>
+                              <p className="text-gray-500">
+                                Escreva seu nome para retirada
+                              </p>
+                              <input
+                                type="text"
+                                className="border-2 rounded-md border-gray-200"
+                                onChange={(e) => {
+                                  setName(e.target.value);
+                                }}
+                                onKeyUp={(e) => {
+                                  if (e.key === "Enter") {
+                                    if (isName) {
+                                      setNoName(false);
+                                      setFinal(!isFinal);
+                                      setOrder(!isOrder);
+                                      sendOrder();
+                                    } else {
+                                      setNoName(true);
+                                    }
+                                  }
+                                }}
+                              />
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button
+                      onClick={() => {
+                        if (isName) {
+                          setNoName(false);
+                          setFinal(!isFinal);
+                          setOrder(!isOrder);
+                          sendOrder();
+                        } else {
+                          setNoName(true);
+                        }
+                      }}
+                      type="button"
+                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-400 text-base font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    >
+                      Confirmar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {isOrder && (
+          <div
+            className="relative z-10"
+            aria-labelledby="modal-title"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"></div>
+
+            <div className="fixed z-10 inset-0 overflow-y-auto">
+              <div className="flex items-center justify-center min-h-full p-4 text-center sm:p-0">
+                <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+                  <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      <div></div>
+                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3
+                          className="text-lg leading-6 font-medium text-gray-900"
+                          id="modal-title"
+                        >
+                          Retirada com o nome:
+                        </h3>
+                        <div className="mt-2">
+                          <p className="text-gray-500">
+                            <span className="text-black font-bold">
+                              {isName}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button
+                      onClick={() => {
+                        setOrder(!isOrder);
+                        setName("");
+                        localStorage.clear()
+                        router.push("/");
+                      }}
+                      type="button"
+                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-400 text-base font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    >
+                      Confirmar
                     </button>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
 import { BiTrash, BiEditAlt } from "react-icons/bi";
 
@@ -20,6 +20,7 @@ function ItemCart({
   slug,
   qtd,
 }: ItemCartProps): ReactElement {
+  const router = useRouter();
   const [isOpen, setOpen] = useState<boolean | boolean>(false);
   const [isEdit, setEdit] = useState<boolean | boolean>(false);
   const [isNewQtd, setNewQtd] = useState<any | any>(false);
